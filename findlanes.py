@@ -1,3 +1,4 @@
+import sys
 import os
 import matplotlib
 matplotlib.use("TkAgg")
@@ -228,6 +229,10 @@ def process_image(image):
 def process_image_from_path(img_path):
     return process_image(mpimg.imread(img_path))
 
+def usage():
+    print('usage: python3 findlanes.py [mp4 | jpg]')
+
+
 '''
 image_paths = os.listdir('test_images/')
 for img_path in image_paths:
@@ -236,6 +241,25 @@ for img_path in image_paths:
     mpimg.imsave('test_images/' + 'lines_' + img_path, pimg)
 '''
 
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        usage()
+        exit()
+    filepath = sys.argv[1]
+    if filepath[-3:] == 'jpg':
+        print('Processing ' + filepath)
+        outimg = process_image_from_path(filepath)
+        mpimg.imsave('out.jpg', outimg)
+    elif filepath[-3:] == 'mp4':
+        print('Processing ' + filepath)
+        clip = VideoFileClip(filepath)
+        outclip = clip.fl_image(process_image)
+        outclip.write_videofile('out.mp4')
+    else:
+        print('Unrecognized argument')
+        usage()
+
+'''
 print('processing video')
 white_output = 'test_videos_output/solidWhiteRight.mp4'
 ## To speed up the testing process you may want to try your pipeline on a shorter subclip of the video
@@ -246,3 +270,4 @@ white_output = 'test_videos_output/solidWhiteRight.mp4'
 clip1 = VideoFileClip("test_videos/solidWhiteRight.mp4")
 white_clip = clip1.fl_image(process_image) #NOTE: this function expects color images!!
 white_clip.write_videofile('test_videos/lanes_solidWhiteRight.mp4')
+'''
